@@ -76,5 +76,6 @@ public class OrderController {
         } catch (FailedToDeleteOrderException e) {
             throw new RuntimeException(e);
         }
+
     }
 }
