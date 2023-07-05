@@ -5,6 +5,8 @@ import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import io.federecio.dropwizard.swagger.SwaggerBundle;
 import io.federecio.dropwizard.swagger.SwaggerBundleConfiguration;
+import org.kainos.ea.resources.AuthController;
+import org.kainos.ea.resources.CustomerController;
 import org.kainos.ea.resources.OrderController;
 import org.kainos.ea.resources.ProductController;
 
@@ -36,6 +38,8 @@ public class trueApplication extends Application<trueConfiguration> {
         // TODO: implement application
         environment.jersey().register(new OrderController());
         environment.jersey().register(new ProductController());
+        environment.jersey().register(new CustomerController());
+        environment.jersey().register(new AuthController());
     }
 
 }

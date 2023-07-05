@@ -20,9 +20,9 @@ public class OrderController {
     @GET
     @Path("/orders")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<Order> getOrders() {
+    public Response getOrders() {
         try {
-            return orderService.getAllOrders();
+            return Response.ok(orderService.getAllOrders()).build();
         } catch (FailedToGetOrdersException e) {
             System.err.println((e.getMessage()));
             throw new RuntimeException(e);

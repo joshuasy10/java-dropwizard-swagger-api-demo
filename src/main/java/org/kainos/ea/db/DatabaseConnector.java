@@ -32,6 +32,10 @@ public class DatabaseConnector {
 
 
             conn = DriverManager.getConnection("jdbc:mysql://" + host + "/" + name + "?useSSL=false", user, password);
+            if(conn == null){
+                throw new RuntimeException("Error connecting to database");
+            }
+            System.err.println(conn.getMetaData());
             return conn;
         }
         catch (Exception e){

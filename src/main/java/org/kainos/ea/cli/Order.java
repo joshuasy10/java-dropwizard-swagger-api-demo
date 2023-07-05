@@ -1,24 +1,46 @@
 package org.kainos.ea.cli;
 
 import java.sql.Time;
-import java.util.Date;
+import java.util.*;
 
 public class Order implements Comparable<Order> {
     private int orderId;
     private int customerId;
     private Date orderDate;
 
+    private String customerName;
 
-    public Order(int orderId, int customerId, Date orderDate) {
+    private List<Product> products;
+
+    public void addProduct(Product product){
+        this.products.add(product);
+    }
+
+    public List<Product> getProducts(){
+        return this.products;
+    }
+
+
+
+    public Order(int orderId, int customerId, Date orderDate, String customerName) {
         this.setOrderId(orderId);
         this.setCustomerId(customerId);
         this.setOrderDate(orderDate);
+        this.setCustomerName(customerName);
+        this.products = new ArrayList<Product>();
     }
 
 
     public int getOrderId() {
         return orderId;
     }
+    public String getCustomerName() {
+        return this.customerName;
+    }
+    public void setCustomerName(String customerName) {
+        this.customerName = customerName;
+    }
+
 
     public void setOrderId(int orderId) {
         this.orderId = orderId;

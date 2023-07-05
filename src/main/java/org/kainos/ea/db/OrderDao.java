@@ -1,7 +1,9 @@
 package org.kainos.ea.db;
 
+import jdk.jfr.Description;
 import org.kainos.ea.cli.Order;
 import org.kainos.ea.cli.OrderRequest;
+import org.kainos.ea.cli.Product;
 import org.kainos.ea.cli.ProductRequest;
 
 import java.io.FileInputStream;
@@ -17,7 +19,9 @@ public class OrderDao {
         Connection c = DatabaseConnector.getConnection();
         Statement st = c.createStatement();
 
-        ResultSet rs = st.executeQuery("SELECT OrderID, CustomerID, PlacedAt FROM `Orders`;");
+        ResultSet rs = st.executeQuery("SELECT Customers.`Name`, OrderID, Orders.`CustomerID`, PlacedAt " +
+                "FROM `Orders` " +
+                "LEFT JOIN Customers ON Orders.CustomerID = Customers.CustomerID;");
 
         List<Order> orderList = new ArrayList<>();
 
@@ -25,8 +29,9 @@ public class OrderDao {
             Order order = new Order(
                     rs.getInt("OrderID"),
                     rs.getInt("CustomerID"),
-                    rs.getDate("PlacedAt")
-            );
+                    rs.getDate("PlacedAt"),
+                    rs.getString("Name")
+                    );
             orderList.add(order);
         }
         return orderList;
@@ -37,17 +42,43 @@ public class OrderDao {
         Connection c = DatabaseConnector.getConnection();
         Statement st = c.createStatement();
 
-        ResultSet rs = st.executeQuery("SELECT OrderID, CustomerID, PlacedAt " +
-                "FROM `Orders`" +
-                "WHERE OrderID = " + id +
+        ResultSet rs = st.executeQuery("SELECT Price, Customers.`Name`, Products.`Name`, Products.ProductID, Quantity, Products.Description, Orders.OrderID, Orders.CustomerID, PlacedAt " +
+                "FROM OrderProducts " +
+                "JOIN Orders ON OrderProducts.OrderId = Orders.OrderID " +
+                "JOIN Products ON OrderProducts.ProductId = Products.ProductID " +
+                "JOIN Customers ON Orders.CustomerID = Customers.CustomerID " +
+                "  WHERE Orders.OrderID = " + id +
                 ";");
 
-        while (rs.next()) {
-            return new Order(
-                    rs.getInt("OrderID"),
-                    rs.getInt("CustomerID"),
-                    rs.getDate("PlacedAt")
+
+        if(rs.next()){
+            Order o = new Order(
+                    rs.getInt("Orders.OrderID"),
+                    rs.getInt("Orders.CustomerID"),
+                    rs.getDate("PlacedAt"),
+                    rs.getString("Customers.Name")
             );
+
+            Product pTemp = new Product(
+                    rs.getInt("ProductId"),
+                    rs.getString("Products.Name"),
+                    rs.getString("Description"),
+                    rs.getDouble("Price")
+            );
+            pTemp.setQuantity(rs.getInt("Quantity"));
+            o.addProduct(pTemp);
+
+            while (rs.next()) {
+                pTemp = new Product(
+                        rs.getInt("ProductId"),
+                        rs.getString("Products.Name"),
+                        rs.getString("Description"),
+                        rs.getDouble("Price")
+                );
+                pTemp.setQuantity(rs.getInt("Quantity"));
+                o.addProduct(pTemp);
+            }
+            return o;
         }
         return null;
     }

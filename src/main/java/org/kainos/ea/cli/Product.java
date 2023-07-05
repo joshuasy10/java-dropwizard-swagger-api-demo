@@ -3,6 +3,17 @@ package org.kainos.ea.cli;
 public class Product implements Comparable<Product> {
     private int productId;
     private String name;
+    private int quantity;
+
+    public int getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
+    }
+
+
 
     public Product(int productId, String name, String description, double price) {
         this.setProductId(productId);
